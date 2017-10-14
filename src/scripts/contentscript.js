@@ -2,7 +2,7 @@ import ext from "./utils/ext";
 import { $$ } from './utils';
 import { ArticleCollector } from './classes';
 
-ArticleCollector();
+new ArticleCollector();
 
 var extractTags = () => {
   var url = document.location.href;

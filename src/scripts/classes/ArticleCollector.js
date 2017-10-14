@@ -7,11 +7,26 @@ export default class ArticleCollector {
     this.startPollingForArticles()
   }
 
-  startPollingForArticles() {
-    const allAnchors = $$('a._52c6');
-    const relevantAnchors = allAnchors.slice( this.articles.length );
-    const newArticles = relevantAnchors.map((a) => new Article(a))
+  getUrls() {
+    return this.articles.map( (a) => a.url )
+  }
 
-    this.articles = [...this.articles, ...newArticles]
+  async getFakenessFromAnchors(anchors) {
+    const urls = anchors.map((a) => a.href);
+     
+  }
+
+  startPollingForArticles() {
+    setInterval(() => {
+      const allAnchors = Array.from( $$('a._52c6') );
+      const relevantAnchors = allAnchors.slice( this.articles.length );
+      const relevantFakeness = this.getFakenessFromAnchors(relevantAnchors);
+
+      const newArticles = relevantAnchors.map((a, idx) => {
+        return new Article(a, relevantFakeness[idx])
+      })
+
+      this.articles = [...this.articles, ...newArticles]
+    }, 1000)
   }
 }
