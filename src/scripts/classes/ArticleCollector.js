@@ -1,10 +1,13 @@
 import { $$ } from '../utils'
+import { post } from '../utils/api'
 import Article from './Article';
+
+const POLL_INTERVAL = 1000;
 
 export default class ArticleCollector {
   constructor() {
     this.articles = [];
-    this.startPollingForArticles()
+    this.pollForArticles()
   }
 
   getUrls() {
@@ -12,21 +15,24 @@ export default class ArticleCollector {
   }
 
   async getFakenessFromAnchors(anchors) {
-    const urls = anchors.map((a) => a.href);
-     
+    const urls = anchors.map( (a) => a.href );
+    const res = await post('/articles', { urls })
+
+    return res.map( (obj) => obj.score )
   }
 
-  startPollingForArticles() {
-    setInterval(() => {
-      const allAnchors = Array.from( $$('a._52c6') );
-      const relevantAnchors = allAnchors.slice( this.articles.length );
-      const relevantFakeness = this.getFakenessFromAnchors(relevantAnchors);
-
+  pollForArticles() {
+    const allAnchors = Array.from( $$('a._52c6') );
+    const relevantAnchors = allAnchors.slice( this.articles.length );
+    this.getFakenessFromAnchors(relevantAnchors)
+    .then( (relevantFakeness) => {
       const newArticles = relevantAnchors.map((a, idx) => {
         return new Article(a, relevantFakeness[idx])
       })
 
       this.articles = [...this.articles, ...newArticles]
-    }, 1000)
+
+      setTimeout(this.pollForArticles.bind(this), POLL_INTERVAL)
+    })
   }
 }
