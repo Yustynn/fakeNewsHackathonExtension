@@ -1,4 +1,5 @@
 import ext from "./utils/ext";
+import { $$ } from './utils';
 
 var extractTags = () => {
   var url = document.location.href;
@@ -24,6 +25,20 @@ var extractTags = () => {
 
   return data;
 }
+
+console.log('lull')
+const printLinks = (node = $$('body')[0]) => {
+  setTimeout(() => {
+    const anchors = ($$('a[data-lynx-uri]'));
+    console.log('printed leh')
+
+    console.log(anchors);
+
+    anchors.forEach(a => console.log(a.href))
+  }, 1000)
+}
+
+//setInterval(printLinks, 1000)
 
 function onRequest(request, sender, sendResponse) {
   if (request.action === 'process-page') {
