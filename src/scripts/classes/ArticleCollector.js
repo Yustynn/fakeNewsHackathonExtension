@@ -6,6 +6,7 @@ const POLL_INTERVAL = 1000;
 
 export default class ArticleCollector {
   constructor() {
+    console.log('starting')
     this.articles = [];
     this.pollForArticles()
   }
